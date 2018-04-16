@@ -1,6 +1,7 @@
 **/Database/
 Resources/
 **/.ipynb_checkpoints
+__pycache__/
 
 .idea/
 # User-specific stuff
