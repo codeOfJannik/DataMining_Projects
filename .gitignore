@@ -1,6 +1,8 @@
+**/Database/
 Resources/
 **/.ipynb_checkpoints
 
+.idea/
 # User-specific stuff
 .idea/**/workspace.xml
 .idea/**/tasks.xml
