@@ -4,12 +4,11 @@ import os.path
 
 # generate SQLite Database
 disk_engine = create_engine('sqlite:///../Database/MobileUserData.db')
+resources_path = os.path.join(os.path.dirname(__file__), "../../Resources/GenderAgePrediction/")
 
 
 # Function to read CSV-files into pandas dataFrames and write into a SQLite Database
 def fromCSVtoSQLite(db_Engine):
-
-    resources_path = os.path.join(os.path.dirname(__file__), "../../Resources/GenderAgePrediction/")
     fileNames = ["events.csv",
                  "app_events.csv",
                  "app_labels.csv",
@@ -31,6 +30,5 @@ def fromCSVtoSQLite(db_Engine):
             df.to_sql(tableName, db_Engine, if_exists='append')
             index_start = df.index[-1] + 1
 
+
 fromCSVtoSQLite(disk_engine)
-
-
