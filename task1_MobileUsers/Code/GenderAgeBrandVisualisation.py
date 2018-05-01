@@ -22,7 +22,7 @@ mostFrequentBrands = (genderAgeBrand_df['brand'].value_counts()).index[0:20]
 
 plt.xticks(np.arange(20), mostFrequentBrands, rotation=90)
 plt.yticks(np.arange(0, 30, 5))
-plt.ylabel("% of frequencies of brand")
+plt.ylabel("frequency of the brand in %")
 plt.grid(True)
 plt.xlabel("20 most frequent brands")
 
@@ -42,7 +42,7 @@ plt.show()
 
 plt.xticks(np.arange(20), mostFrequentBrands, rotation=90)
 plt.yticks(np.arange(0, 30, 5))
-plt.ylabel("% of frequencies of brand")
+plt.ylabel("frequency of the brand in %")
 plt.grid(True)
 plt.xlabel("20 most frequent brands")
 
