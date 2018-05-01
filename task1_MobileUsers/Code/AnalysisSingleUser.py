@@ -21,7 +21,7 @@ events_df = pd.read_sql_query("SELECT COUNT(*) AS number,device_id, longitude AS
 location = events_df[['lat', 'lon']]
 
 # do geocode for the city
-geocode_result = gm.geocode('Japan')[0]
+geocode_result = gm.geocode('China')[0]
 
 # get the center of the city
 center_lat = geocode_result['geometry']['location']['lat']
