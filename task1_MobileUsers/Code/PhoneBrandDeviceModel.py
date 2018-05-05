@@ -8,16 +8,22 @@ import matplotlib.pyplot as plt
 # Read data of phone_device_brand_model
 phoneBrandDevices = pd.read_sql("SELECT device_id, phone_brand FROM phone_brand_device_model", disk_engine)
 
-# Read brandMAp.txt and create dictionary to replace chinese brand names
-brandDict = {}
-with open(os.path.join(resources_path, "brandMap.txt")) as f:
-    for line in f:
-        if line == "\n":
-            continue
-        (key, val) = line.split()
-        brandDict[key] = val
-for key in brandDict.keys():
-    phoneBrandDevices.replace(to_replace=key, value=brandDict[key], inplace=True)
+
+# Read brandMap.txt and create dictionary to replace chinese brand names
+def replaceChineseBrandNames(dataframe):
+    brandDict = {}
+    with open(os.path.join(resources_path, "brandMap.txt")) as f:
+        for line in f:
+            if line == "\n":
+                continue
+            (key, val) = line.split()
+            brandDict[key] = val
+    for key in brandDict.keys():
+        dataframe.replace(to_replace=key, value=brandDict[key], inplace=True)
+    return dataframe
+
+
+phoneBrandDevices = replaceChineseBrandNames(phoneBrandDevices)
 print("Number of different devices in phone_brand_device_model:", len(set(phoneBrandDevices['device_id'])))
 print("Number of different brands in phone_brand_device_model:", len(set(phoneBrandDevices['phone_brand'])))
 
@@ -47,6 +53,3 @@ plt.yticks(np.arange(0, 19000, 1000))
 plt.grid(True)
 
 plt.show()
-
-
-
