@@ -9,16 +9,15 @@
 #       > beliebte Marken bei Frauen/Männern
 #       > beliebte Marken bei unterschiedlichen Altersgruppen
 #   - Häufigkeit der Smartphone Nutzung
-#       > junge Nutzer nutzen Smartphone ggf. häufiger ??
-#       > junge Nutzer nutzen Smartphone eher mal nachts ??
+#       > ältere Nutzer nutzen Smartphone im Schnitt häufiger (siehe plotEventFrequency)
 
 # Merkmals Vektoren:
-# device_id | hersteller | häufigkeit der Nutzung | häufigkeit Nutzung zwischen 23 und 5 uhr | installierte Apps
-
+# device_id | hersteller | häufigkeit der Nutzung | installierte Apps (| aktive Apps)
 
 from CSVtoSQLite import disk_engine
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def labelAppsPerEvent():
@@ -40,4 +39,40 @@ def labelAllApps():
     return appDict
 
 
-labelAllApps()
+def plotEventFrequency():
+    numberOfEvents = pd.read_sql(
+        "SELECT device_ID as device, agegroup FROM gender_age_train", disk_engine)
+    numberOfEvents['eventCount'] = np.zeros(len(numberOfEvents))
+    deviceIds = tuple(numberOfEvents.device.values)
+    eventCount = pd.read_sql(
+        "SELECT device_id as device, COUNT(device_id) as eventCount FROM events WHERE device_id IN "
+        + str(deviceIds)
+        + " GROUP BY device",
+        disk_engine)
+    count_dict = dict(zip(eventCount.device, eventCount.eventCount))
+
+    y = []
+    x = set(list(numberOfEvents.agegroup.values))
+    plt.xticks(np.arange(12), x, rotation=90)
+    plt.yticks(np.arange(0, 220, 20))
+
+    for group in x:
+        devices = numberOfEvents.loc[numberOfEvents['agegroup'] == group].device.values
+        frequency = 0
+        count = 0
+        for device in devices:
+            if device in count_dict.keys():
+                frequency += count_dict[device]
+                count += 1
+        frequency = frequency / count
+        y.append(frequency)
+
+    plt.bar(np.arange(12), y, 0.35)
+    plt.grid(True)
+    plt.show()
+
+
+
+
+
+

@@ -7,10 +7,9 @@ import numpy as np
 import pandas as pd
 from sklearn.cluster import DBSCAN
 import random
+from CSVtoSQLite import disk_engine
 
 pd.options.mode.chained_assignment = None  # default='warn'
-
-from CSVtoSQLite import disk_engine
 
 API_KEY = 'AIzaSyB1UnOoMHLj_QhN-ZD-SHjNf1WJVww2LPY'
 gmaps.configure(api_key='AIzaSyB1UnOoMHLj_QhN-ZD-SHjNf1WJVww2LPY')
