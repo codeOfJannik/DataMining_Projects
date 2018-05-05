@@ -1,5 +1,5 @@
 import datetime
-
+from CSVtoSQLite import disk_engine
 import gmaps
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
@@ -10,12 +10,10 @@ import random
 
 pd.options.mode.chained_assignment = None  # default='warn'
 
-from CSVtoSQLite import disk_engine
-
 API_KEY = 'AIzaSyB1UnOoMHLj_QhN-ZD-SHjNf1WJVww2LPY'
 gmaps.configure(api_key='AIzaSyB1UnOoMHLj_QhN-ZD-SHjNf1WJVww2LPY')
 
-# Eine divce_id herauspicken: 9206538029661406976
+# Eine device_id herauspicken: 9206538029661406976
 events_df = pd.read_sql_query("SELECT COUNT(*) AS number, device_id, longitude AS lon, latitude AS lat "
                               "FROM events "
                               "WHERE longitude > 0 and latitude > 0  and device_id = '9206538029661406976' "
