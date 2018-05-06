@@ -1,12 +1,13 @@
 import datetime
-from CSVtoSQLite import disk_engine
+import random
+
 import gmaps
 import matplotlib.pyplot as plt
-from matplotlib.lines import Line2D
 import numpy as np
 import pandas as pd
+from matplotlib.lines import Line2D
 from sklearn.cluster import DBSCAN
-import random
+
 from CSVtoSQLite import disk_engine
 
 pd.options.mode.chained_assignment = None  # default='warn'

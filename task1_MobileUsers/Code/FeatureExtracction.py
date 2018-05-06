@@ -71,8 +71,4 @@ def plotEventFrequency():
     plt.grid(True)
     plt.show()
 
-
-
-
-
-
+plotEventFrequency()

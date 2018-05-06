@@ -1,8 +1,10 @@
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
+from IPython.display import display
 
 from CSVtoSQLite import disk_engine
+
 from PhoneBrandDeviceModel import replaceChineseBrandNames
 
 pd.options.mode.chained_assignment = None  # default='warn'
@@ -11,7 +13,7 @@ pd.options.mode.chained_assignment = None  # default='warn'
 def initFeatureVector():
     allUsers = pd.read_sql_query("SELECT device_id as device, agegroup"
                                  " FROM gender_age_train"
-                                 " WHERE device IN (SELECT DISTINCT device_id FROM events) LIMIT 50", disk_engine)
+                                 " WHERE device IN (SELECT DISTINCT device_id FROM events) LIMIT 15", disk_engine)
     return allUsers
 
 
@@ -40,28 +42,57 @@ def getNumberOfEvents(allUsers):
 
 
 def getInstalledApps(allUsers):
-    allAppsLabeled = pd.read_sql("SELECT app_id as app, label_id FROM app_labels ORDER BY app", disk_engine)
+    allAppsLabeled = pd.read_sql("SELECT app_id as app, label_id FROM app_labels WHERE label_id IN "
+                                 "(SELECT label_id as label FROM app_labels WHERE app_id IN "
+                                 "(SELECT app_id FROM app_events WHERE is_active = 1) and label_id IN "
+                                 "(SELECT label_id FROM label_categories WHERE category != 'unknown')"
+                                 " GROUP BY label ORDER BY COUNT(label_id) DESC LIMIT 150)", disk_engine)
+
     for appCategory in set(allAppsLabeled.label_id):
         allUsers[appCategory] = 0
     appLabelDict = dict(zip(allAppsLabeled.app, allAppsLabeled.label_id))
+
     events_df = pd.read_sql("SELECT device_id as device, event_id as event "
                             "FROM events " +
                             "WHERE device_id in " + str(tuple(allUsers.device.values)) + " ORDER BY device",
                             disk_engine)
     devices = list(set(events_df.device.values))
-    deviceAppsDict = dict.fromkeys(devices)
+    app_df = pd.read_sql_query(
+        "SELECT app_id as app, event_id as event FROM app_events WHERE is_active = 1 and app_id IN "
+        "(SELECT DISTINCT app_id FROM app_labels WHERE label_id IN " + str(tuple(set(allAppsLabeled.label_id))) + ")",
+        disk_engine)
+
     for device in devices:
         eventList = events_df.loc[events_df['device'] == device]['event']
-        if len(eventList) > 1:
-            installedApps = pd.read_sql("SELECT app_id as app FROM app_events WHERE is_installed = 1 AND event_id IN "
-                                        + str(tuple(eventList)), disk_engine)
-        else:
-            installedApps = pd.read_sql("SELECT app_id as app FROM app_events WHERE is_installed = 1 AND event_id == "
-                                        + str(list(eventList)[0]), disk_engine)
-        for app in installedApps.app:
+        installedApps = app_df.loc[app_df['event'].isin(eventList)]['app']
+        for app in installedApps.values:
             allUsers[appLabelDict[app]][allUsers['device'] == device] += 1
 
     return allUsers
+
+
+def getDeviceCountForAppcat(appCategory):
+    print(appCategory)
+    category = pd.read_sql_query("SELECT device_id, COUNT(device_id) as '" + str(appCategory) +
+                                 "' FROM device_app_events WHERE label_id = " + str(appCategory) +
+                                 " GROUP BY device_id", disk_engine)
+    category.set_index('device_id', inplace=True)
+    return category
+
+
+def getActiveApps(allUsers):
+    allUsers.set_index('device', inplace=True)
+    allAppsLabeled = pd.read_sql("SELECT app_id as app, label_id FROM app_labels WHERE label_id IN "
+                                 "(SELECT label_id as label FROM app_labels WHERE app_id IN "
+                                 "(SELECT app_id FROM app_events WHERE is_active = 1) and label_id IN "
+                                 "(SELECT label_id FROM label_categories WHERE category != 'unknown')"
+                                 " GROUP BY label ORDER BY COUNT(label_id) DESC LIMIT 150)", disk_engine)
+
+    count = 1
+    for appCategory in set(allAppsLabeled.label_id):
+        print(count, "/", len(set(allAppsLabeled.label_id)))
+        allUsers = pd.merge(allUsers, getDeviceCountForAppcat(appCategory), 'inner', right_index=True, left_index=True)
+        count += 1
 
 
 def encodeBrandNames(allUsers):
@@ -80,11 +111,15 @@ def encodeBrandNames(allUsers):
 
 
 featureVector = initFeatureVector()
+print("Init finished")
 featureVector = getDeviceBrands(featureVector)
+print("getDeviceBrands finished")
 featureVector = getNumberOfEvents(featureVector)
-featureVector = getInstalledApps(featureVector)
+print("getNumEvents finished")
+getActiveApps(featureVector)
+print("getApps finished")
 featureVector = encodeBrandNames(featureVector)
+print("encode finished")
 print(featureVector)
-
 
 # TODO: Varianz kontrollieren, Aufgabe 4 Gender-Age-Group Prediction, Aufgabe 5, Aufgabe 6
