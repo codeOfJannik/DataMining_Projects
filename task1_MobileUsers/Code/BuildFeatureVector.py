@@ -9,7 +9,9 @@ pd.options.mode.chained_assignment = None  # default='warn'
 
 
 def initFeatureVector():
-    allUsers = pd.read_sql_query("SELECT device_id as device, agegroup FROM gender_age_train LIMIT 2", disk_engine)
+    allUsers = pd.read_sql_query("SELECT device_id as device, agegroup"
+                                 " FROM gender_age_train"
+                                 " WHERE device IN (SELECT DISTINCT device_id FROM events) LIMIT 50", disk_engine)
     return allUsers
 
 
@@ -82,6 +84,7 @@ featureVector = getDeviceBrands(featureVector)
 featureVector = getNumberOfEvents(featureVector)
 featureVector = getInstalledApps(featureVector)
 featureVector = encodeBrandNames(featureVector)
+print(featureVector)
 
 
 # TODO: Varianz kontrollieren, Aufgabe 4 Gender-Age-Group Prediction, Aufgabe 5, Aufgabe 6
