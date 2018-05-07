@@ -23,3 +23,7 @@ print("Mean a:", calculateMean(a))
 print("Mean b:", calculateMean(b))
 print("Variance a:", variance(a))
 print("Variance b:", variance(b))
+
+
+
+
