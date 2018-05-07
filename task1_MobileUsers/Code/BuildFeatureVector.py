@@ -46,7 +46,7 @@ def getInstalledApps(allUsers):
                                  "(SELECT label_id as label FROM app_labels WHERE app_id IN "
                                  "(SELECT app_id FROM app_events WHERE is_active = 1) and label_id IN "
                                  "(SELECT label_id FROM label_categories WHERE category != 'unknown')"
-                                 " GROUP BY label ORDER BY COUNT(label_id) DESC LIMIT 150)", disk_engine)
+                                 " GROUP BY label ORDER BY COUNT(label_id) DESC LIMIT 2)", disk_engine)
 
     for appCategory in set(allAppsLabeled.label_id):
         allUsers[appCategory] = 0
@@ -72,31 +72,31 @@ def getInstalledApps(allUsers):
 
 
 def getDeviceCountForAppcat(appCategory):
-    print(appCategory)
-    category = pd.read_sql_query("SELECT device_id, COUNT(device_id) as '" + str(appCategory) +
+    category = pd.read_sql_query("SELECT device_id as device, COUNT(device_id) as '" + str(appCategory) +
                                  "' FROM device_app_events WHERE label_id = " + str(appCategory) +
                                  " GROUP BY device_id", disk_engine)
-    category.set_index('device_id', inplace=True)
     return category
 
 
 def getActiveApps(allUsers):
-    allUsers.set_index('device', inplace=True)
+    allUsers = allUsers.set_index('device')
     allAppsLabeled = pd.read_sql("SELECT app_id as app, label_id FROM app_labels WHERE label_id IN "
                                  "(SELECT label_id as label FROM app_labels WHERE app_id IN "
                                  "(SELECT app_id FROM app_events WHERE is_active = 1) and label_id IN "
                                  "(SELECT label_id FROM label_categories WHERE category != 'unknown')"
-                                 " GROUP BY label ORDER BY COUNT(label_id) DESC LIMIT 150)", disk_engine)
-
+                                 " GROUP BY label ORDER BY COUNT(label_id) DESC LIMIT 2)", disk_engine)
     count = 1
     for appCategory in set(allAppsLabeled.label_id):
         print(count, "/", len(set(allAppsLabeled.label_id)))
-        allUsers = pd.merge(allUsers, getDeviceCountForAppcat(appCategory), 'inner', right_index=True, left_index=True)
+        appcat_df = getDeviceCountForAppcat(appCategory)
+        allUsers = allUsers.join(appcat_df.set_index('device'))
         count += 1
+    return allUsers.fillna(0)
 
 
 def encodeBrandNames(allUsers):
     brands = allUsers['phoneBrand']
+    allUsers = allUsers.reset_index()
     labelEncoder = LabelEncoder()
     labelEncoder.fit(brands)
     brands_as_int = labelEncoder.transform(brands)
@@ -116,7 +116,7 @@ featureVector = getDeviceBrands(featureVector)
 print("getDeviceBrands finished")
 featureVector = getNumberOfEvents(featureVector)
 print("getNumEvents finished")
-getActiveApps(featureVector)
+featureVector = getActiveApps(featureVector)
 print("getApps finished")
 featureVector = encodeBrandNames(featureVector)
 print("encode finished")
