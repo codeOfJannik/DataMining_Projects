@@ -1,4 +1,8 @@
 import numpy as np
+import scipy.spatial as spatial
+import scipy.stats as stats
+import math
+
 # Mittelwert:
 # (1 + 2 + 3 + 4 + 5 + 6) / 6
 # = 21 / 6
@@ -30,3 +34,19 @@ print('Varianz a', aVar)
 bVar = np.var(b)
 print('Varianz b', bVar)
 # 3,5
+
+cosdis = spatial.distance.cosine(a, b)
+print("Kosinusähnlichkeit: ", 1 - cosdis)
+
+pearsdis1 = stats.pearsonr(a, b)
+pearsdis2 = 1 / 6 * (
+        (((1 - 3.5) * (3 - 5.33)) / (math.sqrt(2.929) * math.sqrt(3.56)))
+        + (((2 - 3.5) * (3 - 5.33)) / (math.sqrt(2.929) * math.sqrt(3.56)))
+        + (((3 - 3.5) * (5 - 5.33)) / (math.sqrt(2.929) * math.sqrt(3.56)))
+        + (((4 - 3.5) * (6 - 5.33)) / (math.sqrt(2.929) * math.sqrt(3.56)))
+        + (((5 - 3.5) * (7 - 5.33)) / (math.sqrt(2.929) * math.sqrt(3.56)))
+        + (((6 - 3.5) * (8 - 5.33)) / (math.sqrt(2.929) * math.sqrt(3.56)))
+)
+print("Pearsonähnlichkeit 1: ", pearsdis1[0])
+print("Pearsonähnlichkeit 2: ", pearsdis2)
+
