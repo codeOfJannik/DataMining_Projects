@@ -98,5 +98,21 @@ critics = {'Lisa Rose': {'Lady in the Water': 2.5, 'Snakes on a Plane': 3.5,
            'Toby': {'Snakes on a Plane': 4.5, 'You, Me and Dupree': 1.0, 'Superman Returns': 4.0}
            }
 
-print("euclidean similiarity Toby & Lisa Rose:", sim_euclid(critics, 'Toby', 'Lisa Rose'))
-print("pearson similiarity Toby & Lisa Rose:", sim_pearson(critics, 'Toby', 'Lisa Rose'))
+
+def topMatches(prefs, person, similarity):
+    prefsReduced = {key: value for key, value in prefs.items()
+                    if key is not person}
+    similarities = list()
+    for key, value in prefsReduced.items():
+        if similarity == '_simeuclid':
+            similarities.append(sim_euclid(prefs, person, key))
+        elif similarity == '_simpearson':
+            similarities.append(sim_pearson(prefs, person, key))
+        else:
+            return list()
+
+    return sorted(similarities)
+
+print(topMatches(critics, 'Toby', '_simpearson'))
+
+
