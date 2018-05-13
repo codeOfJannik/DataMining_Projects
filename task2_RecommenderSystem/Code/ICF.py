@@ -1,7 +1,4 @@
-import numpy as np
-from math import sqrt
 from SimilarityOfCritics import critics, topMatches, sim_euclid, sim_pearson, sim_RusselRao
-
 
 '''
 NR.1
