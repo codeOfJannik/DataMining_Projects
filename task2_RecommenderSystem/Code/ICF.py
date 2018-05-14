@@ -32,8 +32,8 @@ add transCritics to Dic
 def calculateSimilarItems(prefs, similarity):
     simItems = {}
 
-    for title in prefs:
-        simItems[title] = topMatches(prefs, title, similarity)
+    for title in prefs.keys():
+        simItems[title] = topMatches(prefs,title,similarity)
 
     return simItems
 
@@ -50,41 +50,29 @@ calculation product recommendation
 
 def getRecommendedItems(prefs, person, similarity):
     simItem = calculateSimilarItems(prefs, similarity)
-    result = []
 
     notboughtMovies = []
-    for movie in simItem:
+    for movie in simItem.keys():
         if movie not in critics[person]:
             notboughtMovies.append(movie)
 
+    recommandations = {}
     for notboughtMovie in notboughtMovies:
         sumRecommendation = 0
         sumSimilarities = 0
+        for purchasedMovie, rating in critics[person].items():
+            if similarity == '_simeuclid':
+                simi = sim_euclid(prefs, purchasedMovie, notboughtMovie)
+                sumRecommendation += simi * rating
+                sumSimilarities += simi
+            elif similarity == '_simpearson':
+                simi = sim_pearson(prefs, purchasedMovie, notboughtMovie)
+                sumRecommendation += simi * rating
+                sumSimilarities += simi
 
-        for purchasedMovie, rating in critics[person].iteritems():
-            # 1
-            for item in simItem[notboughtMovie]:
-                # 2
-                if item[0] == purchasedMovie:
-                    if item[1] > 0:
-                        sumRecommendation += rating * item[1]
-                        sumSimilarities += item[1]
-    # 2
-    recommandation = sumRecommendation / sumSimilarities if sumSimilarities != 0 else 0
+        recommandations[notboughtMovie] = sumRecommendation / sumSimilarities if sumSimilarities != 0 else 0
 
-    # 3
-    if len(result) == 0:
-        result.append([notboughtMovie, recommandation])
-    else:
-        index = 0
-        for i, value in enumerate(result):
-            if value[1] > recommandation:
-                index = i + 1
-            else:
-                break
-        result.insert(index, [notboughtMovie, recommandation])
-
-    return result
+    return recommandations
 
 
 transcitics = transCritics(critics)
@@ -101,10 +89,10 @@ def run_icf():
     person = 'Toby'
 
     print('Recommendations for %s ( Euclidean Distance): \n' % (person),
-          getRecommendedItems(tc, person, sim_euclid))
+          getRecommendedItems(tc, person, '_simeuclid'))
 
     print('Recommendations for %s ( Pearson Distance): \n' % (person),
-          getRecommendedItems(tc, person, sim_pearson))
+          getRecommendedItems(tc, person, '_simpearson'))
 
     print('-' * 50)
 
