@@ -7,30 +7,36 @@ NR.1
 #3 Using .iteritems to iterate over key, value in dic
    .iteritems not work --> change to .items
 '''
+
+
 def transCritics(critics):
     movies = {}
 
-    #1 #3
+    # 1 #3
     for critics, details in critics.items():
         for title, rating in details.items():
-            #2
+            # 2
             if title not in movies:
                 movies[title] = {}
             movies[title][critics] = rating
 
     return movies
 
+
 '''
 NR.2
 add transCritics to Dic
 '''
-def  calculateSimilarItems(prefs, similarity):
+
+
+def calculateSimilarItems(prefs, similarity):
     simItems = {}
 
     for title in prefs.keys():
         simItems[title] = topMatches(prefs,title,similarity)
 
     return simItems
+
 
 '''
 NR.3
@@ -40,9 +46,10 @@ calculation product recommendation
                        --> sumSimilarities might equal 0
 #3 insert weighted recommendation into sorted result array
 '''
-def getRecommendedItems(prefs,person,similarity):
-    simItem = calculateSimilarItems(prefs,similarity)
-    result = []
+
+
+def getRecommendedItems(prefs, person, similarity):
+    simItem = calculateSimilarItems(prefs, similarity)
 
     notboughtMovies = []
     for movie in simItem.keys():
@@ -67,6 +74,7 @@ def getRecommendedItems(prefs,person,similarity):
 
     return recommandations
 
+
 transcitics = transCritics(critics)
 
 '''
@@ -74,11 +82,11 @@ NR.4
 Recommendation for Toby
 '''
 
+
 def run_icf():
-    print('-'*50, '\n', 'Item based collaborative filtering \n', '-'*50)
+    print('-' * 50, '\n', 'Item based collaborative filtering \n', '-' * 50)
     tc = transCritics(critics)
     person = 'Toby'
-
 
     print('Recommendations for %s ( Euclidean Distance): \n' % (person),
           getRecommendedItems(tc, person, '_simeuclid'))
@@ -86,8 +94,7 @@ def run_icf():
     print('Recommendations for %s ( Pearson Distance): \n' % (person),
           getRecommendedItems(tc, person, '_simpearson'))
 
-    print('-'*50)
+    print('-' * 50)
+
 
 run_icf()
-
-

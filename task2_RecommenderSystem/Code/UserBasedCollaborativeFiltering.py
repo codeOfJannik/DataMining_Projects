@@ -83,6 +83,7 @@ def sim_pearson(prefs, p1, p2):
 
 print("euclidean similiarity Toby & Lisa Rose:", sim_euclid(critics, 'Toby', 'Lisa Rose'))
 print("pearson similiarity Toby & Lisa Rose:", sim_pearson(critics, 'Toby', 'Lisa Rose'))
+print("")
 
 
 def sim_RusselRao(prefs, person1, person2, normed=True):
@@ -138,29 +139,27 @@ def getRecommendations(prefs, person, similarity):
         # don't compare a person with itself
         if candidate == person:
             continue
-        # if the correlation is negative the persons are too different.
+        # if the correlation is negative, the persons are too different
         if sim[candidate] < 0:
             continue
         # for every media the candidate already knows
         for media in prefs[candidate]:
-            # ... check if the person doesn't know it, too.
+            # for every media the candidate did not know
             if media not in prefs[person] or prefs[person][media] == 0:
-                # check if the not yet seen media is already in the unknownMedia list.
-                # if not add it to unknownMedia and kSums with value 0
+                # check if the not yet seen media is already in the unknownMedia list
+                # if not, add it to unknownMedia and kSums with value 0
                 if media not in unknownMedia:
                     unknownMedia[media] = 0
                     kSums[media] = 0
-                # add the correlation of the candidate to the kSum of the current media.
+                # add the correlation of the candidate to the kSum of the current media
                 kSums[media] += sim[candidate]
-                # add the recommendation of the candidate times the correlation to the sum of the current media
+                # add the recommendation
                 unknownMedia[media] += sim[candidate] * prefs[candidate][media]
 
     # divide the sum of the media by the kSum of the media
     for media in unknownMedia:
         unknownMedia[media] = unknownMedia[media]/kSums[media]
 
-    # switch keys and values in the dictionary to get tuples of (recommendation , name) instead of (name , recommendation) later
-    # unknownMedia = {y:x for x,y in unknownMedia.iteritems()}
 
     # sort dictionary into list by descending keys (recommendation score)
     list = sorted(unknownMedia.items(), key=lambda t: t[1], reverse=True)
@@ -168,4 +167,5 @@ def getRecommendations(prefs, person, similarity):
     return list
 
 
-print(getRecommendations(critics, 'Toby', sim_pearson))
+print("")
+print("Recommended Movies for Toby: " + str(getRecommendations(critics, 'Toby', sim_pearson)))
