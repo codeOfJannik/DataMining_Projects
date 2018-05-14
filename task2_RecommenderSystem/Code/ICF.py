@@ -62,7 +62,7 @@ def getRecommendedItems(prefs,person,similarity):
                 simi = sim_pearson(prefs, purchasedMovie, notboughtMovie)
                 sumRecommendation += simi * rating
                 sumSimilarities += simi
-
+        #3
         recommandations[notboughtMovie] = sumRecommendation / sumSimilarities if sumSimilarities != 0 else 0
 
     return recommandations
