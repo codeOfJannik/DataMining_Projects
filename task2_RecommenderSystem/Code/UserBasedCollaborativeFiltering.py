@@ -83,6 +83,7 @@ def sim_pearson(prefs, p1, p2):
 
 print("euclidean similiarity Toby & Lisa Rose:", sim_euclid(critics, 'Toby', 'Lisa Rose'))
 print("pearson similiarity Toby & Lisa Rose:", sim_pearson(critics, 'Toby', 'Lisa Rose'))
+print("")
 
 
 def sim_RusselRao(prefs, person1, person2, normed=True):
@@ -159,8 +160,6 @@ def getRecommendations(prefs, person, similarity):
     for media in unknownMedia:
         unknownMedia[media] = unknownMedia[media]/kSums[media]
 
-    # switch keys and values in the dictionary to get tuples of (recommendation , name) instead of (name , recommendation) later
-    # unknownMedia = {y:x for x,y in unknownMedia.iteritems()}
 
     # sort dictionary into list by descending keys (recommendation score)
     list = sorted(unknownMedia.items(), key=lambda t: t[1], reverse=True)
@@ -168,4 +167,5 @@ def getRecommendations(prefs, person, similarity):
     return list
 
 
-print(getRecommendations(critics, 'Toby', sim_pearson))
+print("")
+print("Recommended Movies for Toby: " + str(getRecommendations(critics, 'Toby', sim_pearson)))
