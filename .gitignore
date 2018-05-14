@@ -22,3 +22,4 @@ __pycache__/
 .idea/**/gradle.xml
 .idea/**/libraries
 
+.DS_Store
