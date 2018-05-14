@@ -53,7 +53,7 @@ def getRecommendedItems(prefs,person,similarity):
         sumRecommendation = 0
         sumSimilarities = 0
 
-        for purchasedMovie, rating in critics[person].iteritems():
+        for purchasedMovie, rating in critics[person].items():
             #1
             for item in simItem[notboughtMovie]:
                 #2
