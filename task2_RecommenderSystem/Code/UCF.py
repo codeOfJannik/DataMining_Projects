@@ -47,7 +47,7 @@ def getRecommendations(prefs,person,similarity):
     for item in weight:
         for person in sim:
             if sim[person] >= 0:
-                if prefs[person].has_key(item):
+                if person in prefs.keys():
                     kSum[item] = kSum[item] + sim[person]
 
     recommendation = {}
