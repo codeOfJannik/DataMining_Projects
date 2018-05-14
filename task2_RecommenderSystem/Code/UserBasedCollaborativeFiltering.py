@@ -139,21 +139,21 @@ def getRecommendations(prefs, person, similarity):
         # don't compare a person with itself
         if candidate == person:
             continue
-        # if the correlation is negative the persons are too different.
+        # if the correlation is negative, the persons are too different
         if sim[candidate] < 0:
             continue
         # for every media the candidate already knows
         for media in prefs[candidate]:
-            # ... check if the person doesn't know it, too.
+            # for every media the candidate did not know
             if media not in prefs[person] or prefs[person][media] == 0:
-                # check if the not yet seen media is already in the unknownMedia list.
-                # if not add it to unknownMedia and kSums with value 0
+                # check if the not yet seen media is already in the unknownMedia list
+                # if not, add it to unknownMedia and kSums with value 0
                 if media not in unknownMedia:
                     unknownMedia[media] = 0
                     kSums[media] = 0
-                # add the correlation of the candidate to the kSum of the current media.
+                # add the correlation of the candidate to the kSum of the current media
                 kSums[media] += sim[candidate]
-                # add the recommendation of the candidate times the correlation to the sum of the current media
+                # add the recommendation
                 unknownMedia[media] += sim[candidate] * prefs[candidate][media]
 
     # divide the sum of the media by the kSum of the media
