@@ -146,7 +146,7 @@ def getRecommendations(prefs, person, similarity):
         elif similarity == '_simpearson':
             sim[candidate] = sim_pearson(prefs, person, candidate)
         else:
-            print "no valid similarity"
+            print ("no valid similarity")
 
     kSums = {}
     unknownMedia = {}
