@@ -141,7 +141,12 @@ def getRecommendations(prefs, person, similarity):
     for candidate in prefs:
         if candidate == person:
             continue
-        sim[candidate] = similarity(prefs, person, candidate)
+        if similarity == '_simeuclid':
+            sim[candidate] = sim_euclid(prefs, person, candidate)
+        elif similarity == '_simpearson':
+            sim[candidate] = sim_pearson(prefs, person, candidate)
+        else:
+            print "no valid similarity"
 
     kSums = {}
     unknownMedia = {}
@@ -178,4 +183,4 @@ def getRecommendations(prefs, person, similarity):
 
 
 print("")
-print("Recommended Movies for Toby: " + str(getRecommendations(critics, 'Toby', sim_pearson)))
+print("Recommended Movies for Toby: " + str(getRecommendations(critics, 'Toby', '_simeuclid')))
