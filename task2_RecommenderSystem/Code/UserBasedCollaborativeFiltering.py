@@ -124,6 +124,16 @@ for key in critics.keys():
     print("pearson similarities of", key, ":", topMatches(critics, key, '_simpearson'))
 
 
+
+
+# ab hier der code für die ucf aufgabe
+
+'''
+function takes the given critics dictionary, a given person and a given similarity algorithm and returns a 
+recommendation as a sorted list in descending order for not yet seen movies for the given person. 
+in this example there will be movie recommendations for the person toby.
+'''
+
 def getRecommendations(prefs, person, similarity):
 
     # compute correlations
