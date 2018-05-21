@@ -4,7 +4,7 @@
     variance (siehe MeanVarianceCalc.py in Pycharm, dort ist der Code korrekt)
 --->done
 - top_matches mit allgemeineren Variablenbezeichnungen versehen, z.B. person -> item
---->???
+--->done
 - Aufgabe 3 (die, bei der ??? dabei steht) muss nicht beantwortet,
   bzw. nur eine der beiden Aufgabe 3 Fragen muss beantwortet werden
     > Pearson Distanz ist besser, da persönlicher Offset keine Rolle spielt
