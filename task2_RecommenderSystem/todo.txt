@@ -1,0 +1,6 @@
+- Aufgaben zur Vorbereitung - Code zur Berechnung von Mittelwert und Varianz (Ergebnis wird in Python 2 gerundet)
+    > Änderung von 'result = sum / len(vector)' in 'result = float(sum) / float(len(vector))' sowohl in calculateMean und
+    variance
+- top_matches mit allgemeineren Variablenbezeichnungen versehen, z.B. person -> item
+- Aufgabe 3 bei Top Matches auf Aufgabe 3 von davor verweisen
+- Codebeschreibungen ausformulieren und auf deutsch schreiben
