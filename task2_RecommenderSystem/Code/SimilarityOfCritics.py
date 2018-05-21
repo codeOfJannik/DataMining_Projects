@@ -111,7 +111,7 @@ def topMatches(prefs, person, similarity):
         else:
             return list()
 
-    return sorted(similarities)
+    return 
 
 print(topMatches(critics, 'Toby', '_simpearson'))
 
