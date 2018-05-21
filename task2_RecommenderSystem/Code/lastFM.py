@@ -49,6 +49,13 @@ userDict = createLastfmUserDict(group)
 
 user = 'SkyRif'
 
+
 print sc.topMatches(userDict, user,'_simeuclid')
 print getRecommendations(userDict, user, '_simeuclid')
+
+print '\n'
+print '-'*35,'top Matches for ',user,' (Euclidean Distance)','-'*35,'\n', sc.topMatches(userDict, user,'_simeuclid'), '\n'
+print '-'*33,'Recommendations for ',user,' (Euclidean Distance)','-'*33,'\n', getRecommendations(userDict, user, '_simeuclid'), '\n'
+print '-'*33,'Recommendations for ',user,' (Russel_Rao Distance)','-'*33,'\n', getRecommendations(userDict, user, '_simrussel')
+print '-'*117
 

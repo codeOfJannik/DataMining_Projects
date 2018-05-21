@@ -125,9 +125,6 @@ for key in critics.keys():
 
 
 
-
-# ab hier der code für die ucf aufgabe
-
 '''
 function takes the given critics dictionary, a given person and a given similarity algorithm and returns a 
 recommendation as a sorted list in descending order for not yet seen movies for the given person. 
@@ -145,6 +142,8 @@ def getRecommendations(prefs, person, similarity):
             sim[candidate] = sim_euclid(prefs, person, candidate)
         elif similarity == '_simpearson':
             sim[candidate] = sim_pearson(prefs, person, candidate)
+        elif similarity == '_simrussel':
+            sim[candidate] = sim_RusselRao(prefs,person,candidate)
         else:
             print ("no valid similarity")
 
