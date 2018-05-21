@@ -1,10 +1,16 @@
 - Aufgaben zur Vorbereitung - Code zur Berechnung von Mittelwert und Varianz (Ergebnis wird in Python 2 gerundet)
+--->???done
     > Änderung von 'result = sum / len(vector)' in 'result = float(sum) / float(len(vector))' sowohl in calculateMean und
     variance (siehe MeanVarianceCalc.py in Pycharm, dort ist der Code korrekt)
+--->done
 - top_matches mit allgemeineren Variablenbezeichnungen versehen, z.B. person -> item
+--->???
 - Aufgabe 3 (die, bei der ??? dabei steht) muss nicht beantwortet,
   bzw. nur eine der beiden Aufgabe 3 Fragen muss beantwortet werden
     > Pearson Distanz ist besser, da persönlicher Offset keine Rolle spielt
       und Personen mit gegensätzlichem Musikgeschmack eine negative Korrelation aufzeigen
+--->done
 - Rückgabe aus top-matches sollte gelabelt sein -> ??sortedDict??
+--->???
 - Codebeschreibungen auf deutsch und ausformulieren
+---done
