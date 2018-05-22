@@ -14,3 +14,35 @@
 --->done
 - Codebeschreibungen auf deutsch und ausformulieren
 ---done
+
+
+-- Änderungen 22.05.18 im Notebook VersuchRecommenderSystems_js329.ipynb --
+
+    1. Aufgabe zur Vorbereitung ("Schreiben sie eine Python-Funktion...")
+        - Code in mehrere Zellen aufgeteilt
+        - Code überarbeitet (einheitliche Leerzeichen, etc.)
+        - Jede Zelle mit Markdown einzeln kurz beschrieben
+        - print der Überschrift (z.B. ---------- Python handmade ----------) entfernt
+    2. Aufgabe Implementation top_matches
+        - medium umbenannt in matchItem
+        - Bug in sortierter Ausgabe behoben
+        - Beschreibung in Markdown vor Codezelle hinzugefügt
+    3. Markdown Aufgabe 3. nach topMatches verändert und erweitert
+    4. Aufgabe UCF
+        - Codebeschreibungen in Fliesstext umgesetzt
+        - Code in mehrere Zellen aufgeteilt und jeweils mit zugehörigem Markdown versehen
+        - Durch Markdown überflüssiges 'Styling' im Code entfernt
+    5. Aufgabe ICF
+        - Codebeschreibungen in Fliesstext umgesetzt
+        - Code in mehrere Zellen aufgeteilt und jeweils mit zugehörigem Markdown versehen
+        - Durch Markdown überflüssiges 'Styling' im Code entfernt
+    6. Aufgabe last.fm Musikempfehlungen
+        - Codebeschreibungen in Fliesstext umgesetzt
+        - Code in mehrere Zellen aufgeteilt und jeweils mit zugehörigen Markdown versehen
+        - Durch Markdown überflüssiges 'Styling' im Code entfernt
+        - Inhalt bei Diskussion (Afg. 7) hinzugefügt
+            > Auch Code für weitergehende Nachforschungen. Muss noch ausgeführt und interpretiert werden!!!
+
+    Durch Änderungen am Code sollten nochmal alle Zellen von oben nach unten ausgeführt werden, damit alles funktioniert!
+
+-- Ende Änderungen 22.05.18 im Notebook VersuchRecommenderSystems_js329.ipynb --
