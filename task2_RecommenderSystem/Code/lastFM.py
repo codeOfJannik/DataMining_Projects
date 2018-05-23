@@ -22,14 +22,17 @@ def createLastfmUserDict(group):
     userDict = {}
 
     for user in group:
-        topartist = user.get_top_artists()[0:20]
+        topartist = user.get_top_artists()[0:100]
         topBandList = []
-        for i in range(0, 20):
+        for i in range(0, 100):
             try:
                 allBands.add(str(topartist[i].item.name))
                 topBandList.append(str(topartist[i].item.name))
             except:
-                print "not able to write", topartist[i].item.name, "band into set"
+                try:
+                    print "not able to write", topartist[i].item.name, "band into set"
+                except:
+                    print 'UPPS'
         topUserBands[user] = topBandList
 
     for user in group:
