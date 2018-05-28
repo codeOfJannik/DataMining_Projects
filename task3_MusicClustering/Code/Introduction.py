@@ -28,9 +28,11 @@ def moments(x):
 
 
 # Feature category 2: Frequency domain parameters
+# TODO für 3,6 division muss auf int gecasted werden
+
 def fftfeatures(wavdata):
     f = numpy.fft.fft(wavdata)
-    f = f[2:(f.size / 2 + 1)]
+    f = f[2:(int(f.size) / 2 + 1)]
     f = abs(f)
     total_power = f.sum()
     f = numpy.array_split(f, 10)
