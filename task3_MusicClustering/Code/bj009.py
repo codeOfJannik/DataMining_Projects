@@ -85,7 +85,7 @@ def compute_chunk_features(mp3_file):
     mpg123_command = '/usr/local/Cellar/mpg123/1.25.10/bin/mpg123 -w "%s" -r 10000 -m "%s"'
     out_file = 'temp.wav'
     cmd = mpg123_command % (out_file, mp3_file)
-    temp = subprocess.call(cmd)
+    temp = subprocess.call(cmd, shell=True)
     # Read in chunks of data from WAV file
     wav_data1, wav_data2 = read_wav(out_file)
     # We'll cover how the features are computed in the next section!
