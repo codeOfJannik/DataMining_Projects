@@ -27,7 +27,6 @@ def moments(x):
     return [mean, std, skewness, kurtosis]
 
 
-# Feature category 2: Frequency domain parameters
 def fftfeatures(wavdata):
     f = numpy.fft.fft(wavdata)
     f = f[2:(int(f.size / 2) + 1)]
