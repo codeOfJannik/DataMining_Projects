@@ -30,7 +30,7 @@ def moments(x):
 # Feature category 2: Frequency domain parameters
 def fftfeatures(wavdata):
     f = numpy.fft.fft(wavdata)
-    f = f[2:(f.size / 2 + 1)]
+    f = f[2:(int(f.size / 2) + 1)]
     f = abs(f)
     total_power = f.sum()
     f = numpy.array_split(f, 10)
@@ -90,10 +90,10 @@ def compute_chunk_features(mp3_file):
     # mpg123_command = 'C:\Program Files (x86)\mpg123-1.22.0-x86\mpg123-1.22.0-x86\\mpg123.exe -w "%s" -r 10000 -m "%s"'
     # mpg123_command = 'C:\\Program Files (x86)\\mpg123-1.21.0-x86-64\\mpg123.exe -w "%s" -r 10000 -m "%s"'
     # mpg123_command = 'C:\Users\maucher\Downloads\mpg123-1.23.8-x86-64\mpg123-1.23.8-x86-64\\mpg123.exe -w "%s" -r 10000 -m "%s"'
-    mpg123_command = '/usr/local/Cellar/mpg123/1.25.10/bin/mpg123.exe -w "%s" -r 10000 -m "%s"'
+    mpg123_command = '/usr/local/Cellar/mpg123/1.25.10/bin/mpg123 -w "%s" -r 10000 -m "%s"'
     out_file = 'temp.wav'
     cmd = mpg123_command % (out_file, mp3_file)
-    temp = subprocess.call(cmd)
+    temp = subprocess.call(cmd, shell=True)
     # Read in chunks of data from WAV file
     wav_data1, wav_data2 = read_wav(out_file)
     # We'll cover how the features are computed in the next section!
@@ -112,7 +112,7 @@ for path, dirs, files in os.walk('./../../Resources/BandCollection'):
             # Skip any non-MP3 files
             continue
         mp3_file = os.path.join(path, f)
-        print(mp3_file)
+        print (mp3_file)
         # Extract the track name (i.e. the file name) plus the names
         # of the two preceding directories. This will be useful
         # later for plotting.
@@ -125,11 +125,11 @@ for path, dirs, files in os.walk('./../../Resources/BandCollection'):
         try:
             feature_vec1, feature_vec2 = compute_chunk_features(mp3_file)
         except:
-            print("Error: Chunk Features failed")
+            print ("Error: Chunk Features failed")
             continue
         # title=str(track)
         title = str(dir1) + '\\' + str(track)
-        print('-' * 20 + title + '-' * 20)
+        print ('-' * 20 + title + '-' * 20)
         # print "       feature vector 1:",feature_vec1
         # print "       feature vector 2:",feature_vec2
         fileList.append(title)
