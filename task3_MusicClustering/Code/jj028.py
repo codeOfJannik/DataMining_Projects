@@ -86,6 +86,7 @@ def compute_chunk_features(mp3_file):
     """Return feature vectors for two chunks of an MP3 file."""
     # Extract MP3 file to a mono, 10kHz WAV file
     mpg123_command = '/usr/local/Cellar/mpg123/1.25.10/bin/mpg123 -w "%s" -r 10000 -m "%s"'
+    #changed out-file to ending with "1" for not overwriting an already existing one!!!
     out_file = 'temp1.wav'
     cmd = mpg123_command % (out_file, mp3_file)
     #temp = subprocess.call(cmd)
@@ -94,6 +95,7 @@ def compute_chunk_features(mp3_file):
     wav_data1, wav_data2 = read_wav(out_file)
     # We'll cover how the features are computed in the next section!
     return numpy.array(features(wav_data1)), numpy.array(features(wav_data2))
+
 
 fileList = []
 featureList1 = []
@@ -134,6 +136,7 @@ for path, dirs, files in os.walk('./../../Resources/BandCollection'):
         featureList2.append(feature_vec2)
 
 # Write feature vecotrs of all music files to pandas data-frame
+# changed my csv-files to ending with an "a" for not overwriting already existing ones!!!
 MusicFeaturesTrain = pd.DataFrame(index=fileList, data=numpy.array(featureList1), columns=FeatNames)
 MusicFeaturesTrain.to_csv("FeatureFileTrainingAllList1a.csv")
 
