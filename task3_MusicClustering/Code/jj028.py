@@ -85,18 +85,6 @@ def read_wav(wav_file):
 def compute_chunk_features(mp3_file):
     """Return feature vectors for two chunks of an MP3 file."""
     # Extract MP3 file to a mono, 10kHz WAV file
-    #mpg123_command = 'C:\Program Files (x86)\mpg123-1.22.0-x86\mpg123-1.22.0-x86\\mpg123.exe -w "%s" -r 10000 -m "%s"'
-    #mpg123_command = 'C:\\Program Files (x86)\\mpg123-1.21.0-x86-64\\mpg123.exe -w "%s" -r 10000 -m "%s"'
-    #mpg123_command = 'C:\Users\maucher\Downloads\mpg123-1.23.8-x86-64\mpg123-1.23.8-x86-64\\mpg123.exe -w "%s" -r 10000 -m "%s"'
-    #mpg123_command = 'usr/local/lib/mpg123'
-    #mpg123_command = '/usr/local/Cellar/mpg123/1.25.10/bin/mpg123 -w "%s" -r 10000 -m "%s"'
-    #mpg123_command = '/usr/local/Cellar/mpg123/1.25.10 -w "%s" -r 10000 -m "%s"'
-    #mpg123_command = '/Users/MontyRock/Downloads/mpg123-1.25.10/src/mpg123 -w "%s" -r 10000 -m "%s"'
-    #mpg123_command = '/Users/MontyRock/Downloads/mpg123-1.25.10 -w "%s" -r 10000 -m "%s"'
-    #mpg123_command = '/usr/local/bin/mpg123 -w "%s" -r 10000 -m "%s"'
-    #print ("test_str1")
-    #print (str(mpg123_command))
-    #print ("test_str2")
     mpg123_command = '/usr/local/Cellar/mpg123/1.25.10/bin/mpg123 -w "%s" -r 10000 -m "%s"'
     out_file = 'temp1.wav'
     cmd = mpg123_command % (out_file, mp3_file)
@@ -112,12 +100,6 @@ featureList1 = []
 featureList2 = []
 #Specify the name of the directory, which contains your MP3 files here.
 # This directory should contain for each band/author one subdirectory, which contains all songs of this author
-#for path, dirs, files in os.walk('./BandCollection'):
-#for path, dirs, files in os.walk('../Ressources/BandCollection'):
-#for path, dirs, files in os.walk(os.path.join(os.path.dirname(os.getcwd()),"../Resources/BandCollection")):
-#resource_path = (os.path.join(os.path.dirname(os.getcwd()),'./Resources/BandCollection/'))
-#print (resource_path)
-#for path, dirs, files in os.walk(resource_path):
 for path, dirs, files in os.walk('./../../Resources/BandCollection'):
     print ('-'*10,dirs,files)
     for f in files:
@@ -125,13 +107,9 @@ for path, dirs, files in os.walk('./../../Resources/BandCollection'):
             # Skip any non-MP3 files
             continue
         mp3_file = os.path.join(path, f)
-        #print("test1")
         #print(path)
-        #print("test2")
         #print(f)
-        #print("test3")
         print(mp3_file)
-        #print("test4")
         # Extract the track name (i.e. the file name) plus the names
         # of the two preceding directories. This will be useful
         # later for plotting.
