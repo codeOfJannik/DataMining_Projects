@@ -1,4 +1,6 @@
 from Matching import trainDF, testDF, meanRank, distance
+from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
 import numpy as np
 import pandas as pd
 import random
@@ -150,6 +152,25 @@ def saveFeatures(population):
     subTrainDataFrame.to_csv("subFeaturesTrain1.csv")
 
 
+# population = initPopulation(populationSize, featureCount)
+# startGeneticAlgorithm(population, featureCount, iterations, mutationProbability)
 
-population = initPopulation(populationSize, featureCount)
-startGeneticAlgorithm(population, featureCount, iterations, mutationProbability)
+
+def clustering():
+    data = pd.read_csv("subFeaturesTrain1.csv")
+    data = data.set_index("Unnamed: 0")
+    Z = linkage(data, 'average', 'correlation')
+    plt.figure(figsize=(25, 10), dpi=80)
+    plt.title('Hierarchical Clustering Dendrogram')
+    plt.xlabel("distance")
+    plt.ylabel('music titles')
+    dendrogram(
+        Z,
+        leaf_font_size=8,  # font size for the x axis labels
+        labels=data.index,
+        orientation='right'
+    )
+    plt.show()
+
+
+clustering()
