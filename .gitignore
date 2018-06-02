@@ -3,6 +3,9 @@ Resources/
 **/.ipynb_checkpoints
 __pycache__/
 
+*.csv
+*.wav
+
 .idea/
 # User-specific stuff
 .idea/**/workspace.xml

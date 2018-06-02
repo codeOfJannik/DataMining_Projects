@@ -5,18 +5,16 @@ import numpy
 import os
 import pandas as pd
 
-numpy.set_printoptions(precision=2, suppress=True)
 
-# Names of features extracted in this module
-FeatNames = ["amp1mean", "amp1std", "amp1skew", "amp1kurt", "amp1dmean", "amp1dstd", "amp1dskew", "amp1dkurt",
-             "amp10mean", "amp10std",
-             "amp10skew", "amp10kurt", "amp10dmean", "amp10dstd", "amp10dskew", "amp10dkurt", "amp100mean", "amp100std",
-             "amp100skew",
-             "amp100kurt", "amp100dmean", "amp100dstd", "amp100dskew", "amp100dkurt", "amp1000mean", "amp1000std",
-             "amp1000skew",
-             "amp1000kurt", "amp1000dmean", "amp1000dstd", "amp1000dskew", "amp1000dkurt", "power1", "power2", "power3",
-             "power4",
-             "power5", "power6", "power7", "power8", "power9", "power10"]
+numpy.set_printoptions(precision=2,suppress=True)
+
+
+#Names of features extracted in this module
+FeatNames=["amp1mean", "amp1std", "amp1skew", "amp1kurt", "amp1dmean", "amp1dstd", "amp1dskew", "amp1dkurt",
+           "amp10mean", "amp10std", "amp10skew", "amp10kurt", "amp10dmean", "amp10dstd", "amp10dskew", "amp10dkurt",
+           "amp100mean", "amp100std", "amp100skew", "amp100kurt", "amp100dmean", "amp100dstd", "amp100dskew", "amp100dkurt",
+           "amp1000mean", "amp1000std", "amp1000skew", "amp1000kurt", "amp1000dmean", "amp1000dstd", "amp1000dskew", "amp1000dkurt",
+           "power1", "power2", "power3", "power4", "power5", "power6", "power7", "power8", "power9", "power10"]
 
 
 def moments(x):
@@ -27,6 +25,7 @@ def moments(x):
     return [mean, std, skewness, kurtosis]
 
 
+#Feature category 2: Frequency domain parameters
 def fftfeatures(wavdata):
     f = numpy.fft.fft(wavdata)
     f = f[2:(int(f.size / 2) + 1)]
@@ -36,7 +35,7 @@ def fftfeatures(wavdata):
     return [e.sum() / total_power for e in f]
 
 
-# Creating the entire feature vector per music-file
+#Creating the entire feature vector per music-file
 def features(x):
     x = numpy.array(x)
     f = []
@@ -71,10 +70,10 @@ def read_wav(wav_file):
     n = 60 * 10000
     if w.getnframes() < n * 3:
         raise ValueError('Wave file too short')
-    # For each music file 2 sequences, each containing n frames are subtracted. The first sequence starts at postion n,
-    # the second sequence starts at postion 2n. The reason for extracting 2 subsequences is, that later on we like to
-    # find the best features and in this exercise we assume that good features have the property that they are similar for 2 subsequences
-    # of the same song, but differ for subsequences of different songs.
+    #For each music file 2 sequences, each containing n frames are subtracted. The first sequence starts at postion n,
+    #the second sequence starts at postion 2n. The reason for extracting 2 subsequences is, that later on we like to
+    #find the best features and in this exercise we assume that good features have the property that they are similar for 2 subsequences
+    #of the same song, but differ for subsequences of different songs.
     w.setpos(n)
     frames = w.readframes(n)
     wav_data1 = struct.unpack('%dh' % n, frames)
@@ -86,12 +85,11 @@ def read_wav(wav_file):
 def compute_chunk_features(mp3_file):
     """Return feature vectors for two chunks of an MP3 file."""
     # Extract MP3 file to a mono, 10kHz WAV file
-    # mpg123_command = 'C:\Program Files (x86)\mpg123-1.22.0-x86\mpg123-1.22.0-x86\\mpg123.exe -w "%s" -r 10000 -m "%s"'
-    # mpg123_command = 'C:\\Program Files (x86)\\mpg123-1.21.0-x86-64\\mpg123.exe -w "%s" -r 10000 -m "%s"'
-    # mpg123_command = 'C:\Users\maucher\Downloads\mpg123-1.23.8-x86-64\mpg123-1.23.8-x86-64\\mpg123.exe -w "%s" -r 10000 -m "%s"'
     mpg123_command = '/usr/local/Cellar/mpg123/1.25.10/bin/mpg123 -w "%s" -r 10000 -m "%s"'
-    out_file = 'temp.wav'
+    #changed out-file to ending with "1" for not overwriting an already existing one!!!
+    out_file = 'temp1.wav'
     cmd = mpg123_command % (out_file, mp3_file)
+    #temp = subprocess.call(cmd)
     temp = subprocess.call(cmd, shell=True)
     # Read in chunks of data from WAV file
     wav_data1, wav_data2 = read_wav(out_file)
@@ -102,16 +100,18 @@ def compute_chunk_features(mp3_file):
 fileList = []
 featureList1 = []
 featureList2 = []
-# Specify the name of the directory, which contains your MP3 files here.
+#Specify the name of the directory, which contains your MP3 files here.
 # This directory should contain for each band/author one subdirectory, which contains all songs of this author
 for path, dirs, files in os.walk('./../../Resources/BandCollection'):
-    # print '-'*10,dirs,files
+    print ('-'*10,dirs,files)
     for f in files:
         if not f.endswith('.mp3'):
             # Skip any non-MP3 files
             continue
         mp3_file = os.path.join(path, f)
-        print (mp3_file)
+        #print(path)
+        #print(f)
+        print(mp3_file)
         # Extract the track name (i.e. the file name) plus the names
         # of the two preceding directories. This will be useful
         # later for plotting.
@@ -126,18 +126,19 @@ for path, dirs, files in os.walk('./../../Resources/BandCollection'):
         except:
             print ("Error: Chunk Features failed")
             continue
-        # title=str(track)
+        #title=str(track)
         title = str(dir1) + '\\' + str(track)
         print ('-' * 20 + title + '-' * 20)
-        # print "       feature vector 1:",feature_vec1
-        # print "       feature vector 2:",feature_vec2
+        print ("       feature vector 1:",feature_vec1)
+        print ("       feature vector 2:",feature_vec2)
         fileList.append(title)
         featureList1.append(feature_vec1)
         featureList2.append(feature_vec2)
 
 # Write feature vecotrs of all music files to pandas data-frame
+# changed my csv-files to ending with an "a" for not overwriting already existing ones!!!
 MusicFeaturesTrain = pd.DataFrame(index=fileList, data=numpy.array(featureList1), columns=FeatNames)
-MusicFeaturesTrain.to_csv("FeatureFileTrainingAllList1.csv")
+MusicFeaturesTrain.to_csv("FeatureFileTrainingAllList1a.csv")
 
 MusicFeaturesTest = pd.DataFrame(index=fileList, data=numpy.array(featureList2), columns=FeatNames)
-MusicFeaturesTest.to_csv("FeatureFileTestAllList2.csv")
+MusicFeaturesTest.to_csv("FeatureFileTestAllList2a.csv")
