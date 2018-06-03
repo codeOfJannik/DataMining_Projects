@@ -6,6 +6,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 from sklearn.model_selection import train_test_split, cross_val_score
 from sklearn import preprocessing
 
+
 #Names of features extracted in this module
 FeatNames=["amp1mean","amp1std","amp1skew","amp1kurt","amp1dmean","amp1dstd","amp1dskew","amp1dkurt","amp10mean","amp10std",
            "amp10skew","amp10kurt","amp10dmean","amp10dstd","amp10dskew","amp10dkurt","amp100mean","amp100std","amp100skew",
@@ -30,5 +31,5 @@ def fromCSVtoDataframe():
 
     print train_scaled
     print test_scaled
-    
+
 fromCSVtoDataframe()

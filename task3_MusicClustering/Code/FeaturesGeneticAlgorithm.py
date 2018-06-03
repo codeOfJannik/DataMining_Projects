@@ -1,4 +1,6 @@
 from Matching import trainDF, testDF, meanRank, distance
+from matplotlib import pyplot as plt
+from scipy.cluster.hierarchy import dendrogram, linkage
 import numpy as np
 import pandas as pd
 import random
@@ -30,6 +32,7 @@ def startGeneticAlgorithm(initialPopulation, featurecount, iterations, mutationP
     population = initialPopulation
     i = 0
     while i < iterations:
+        print("Iteration:", i)
         populationFitnessDict = calculateFitness(population)
         childList = crossing(populationFitnessDict, mutationProbability, featurecount)
         j = 0
@@ -41,7 +44,7 @@ def startGeneticAlgorithm(initialPopulation, featurecount, iterations, mutationP
             population = np.vstack([population, childList[j]])
             j += 1
         i += 1
-
+    saveFeatures(population)
 
 
 def calculateFitness(population):
@@ -92,7 +95,7 @@ def selection(populationFitnessDict):
     return parent1, parent2
 
 
-def crossing(populationFitnessDict, mutationProbability, featurecount):
+def crossing(populationFitnessDict, mutationProb, featurecount):
     while True:
         parents = selection(populationFitnessDict)
         parent1 = sorted(parents[0])
@@ -105,7 +108,7 @@ def crossing(populationFitnessDict, mutationProbability, featurecount):
         child1 = np.append(parent1A, parent2A)
         child2 = np.append(parent1B, parent2B)
         if len(set(child1)) == featurecount and len(set(child2)) == featurecount:
-            childList = mutation(mutationProbability, child1, child2)
+            childList = mutation(mutationProb, child1, child2)
             for index, child in enumerate(childList):
                 featureList = []
                 for featureIndex in child:
@@ -116,30 +119,58 @@ def crossing(populationFitnessDict, mutationProbability, featurecount):
                 distances = distance('dist_euclid', subTrainDataFrame, subTestDataFrame)
                 fitnessValue = meanRank(distances)
                 if fitnessValue > sorted(populationFitnessDict.keys())[-1]:
-                    childList.pop(index)
+                    childList = np.delete(childList, 0, 0)
             return childList
 
 
-# TODO: funktioniert noch nicht
-def mutation(mutationProbability, child1, child2):
-    childList = [child1, child2]
-    for index in range(len(childList)):
-        indx = index
+def mutation(mutationProb, child1, child2):
+    childList = np.array([child1, child2])
+    for child in childList:
         mutrn = random.randint(0, 100)
-        if mutrn < 101:
-            childList.pop(indx)
+        if mutrn < mutationProb:
+            childList = np.delete(childList, 0, 0)
             reducedFeatNames = []
             for idx, element in enumerate(FeatNames):
-                if idx not in childList[indx]:
+                if idx not in child:
                     reducedFeatNames.append(element)
             reducedFeatNames = np.array(reducedFeatNames)
-            randomReplaceIndex = random.randint(0, len(childList[indx])-1)
-            randomFeatNameIndex = random.randint(0, len(reducedFeatNames)-1)
-            childList[indx][randomReplaceIndex] = FeatNames.index(reducedFeatNames[randomFeatNameIndex])
-            childList.append(childList[indx])
+            randomReplaceIndex = random.randint(0, len(child) - 1)
+            randomFeatNameIndex = random.randint(0, len(reducedFeatNames) - 1)
+            child[randomReplaceIndex] = FeatNames.index(reducedFeatNames[randomFeatNameIndex])
+            childList = np.vstack((childList, child))
     return childList
 
 
+def saveFeatures(population):
+    populationFitnessDict = calculateFitness(population)
+    bestFitnessValue = sorted(populationFitnessDict.keys())[0]
+    print("best chromosome:", bestFitnessValue, populationFitnessDict[bestFitnessValue])
+    featureList = []
+    for featureIndex in populationFitnessDict[bestFitnessValue]:
+        featureList.append(FeatNames[int(featureIndex)])
+    subTrainDataFrame = pd.DataFrame(index=trainDF.index, columns=featureList, data=trainDF[featureList])
+    subTrainDataFrame.to_csv("subFeaturesTrain1.csv")
 
-population = initPopulation(populationSize, featureCount)
-startGeneticAlgorithm(population, featureCount, iterations, mutationProbability)
+
+# population = initPopulation(populationSize, featureCount)
+# startGeneticAlgorithm(population, featureCount, iterations, mutationProbability)
+
+
+def clustering():
+    data = pd.read_csv("subFeaturesTrain1.csv")
+    data = data.set_index("Unnamed: 0")
+    Z = linkage(data, 'average', 'correlation')
+    plt.figure(figsize=(25, 10), dpi=80)
+    plt.title('Hierarchical Clustering Dendrogram')
+    plt.xlabel("distance")
+    plt.ylabel('music titles')
+    dendrogram(
+        Z,
+        leaf_font_size=8,  # font size for the x axis labels
+        labels=data.index,
+        orientation='right'
+    )
+    plt.show()
+
+
+clustering()
