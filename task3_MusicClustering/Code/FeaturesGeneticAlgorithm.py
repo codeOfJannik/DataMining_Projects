@@ -1,6 +1,7 @@
 from Matching import trainDF, testDF, meanRank, distance
 from matplotlib import pyplot as plt
-from scipy.cluster.hierarchy import dendrogram, linkage
+from scipy import spatial
+from scipy.cluster.hierarchy import dendrogram, linkage, fcluster
 import numpy as np
 import pandas as pd
 import random
@@ -34,6 +35,7 @@ def startGeneticAlgorithm(initialPopulation, featurecount, iterations, mutationP
     while i < iterations:
         print("Iteration:", i)
         populationFitnessDict = calculateFitness(population)
+        print("best", sorted(populationFitnessDict.keys(), reverse=True)[0], populationFitnessDict[sorted(populationFitnessDict.keys(), reverse=True)[0]])
         childList = crossing(populationFitnessDict, mutationProbability, featurecount)
         j = 0
         while j < len(childList):
@@ -57,14 +59,14 @@ def calculateFitness(population):
         subTestDataFrame = pd.DataFrame(index=testDF.index, columns=featureList, data=testDF[featureList])
 
         distances = distance('dist_euclid', subTrainDataFrame, subTestDataFrame)
-        fitnessValue = meanRank(distances)
+        fitnessValue = 1 / meanRank(distances)
         fitnessDict[fitnessValue] = chromosome
     return fitnessDict
 
 
 def selection(populationFitnessDict):
     allfitnessValues = populationFitnessDict.keys()
-    allfitnessValues = np.array(sorted(allfitnessValues))
+    allfitnessValues = np.array(sorted(allfitnessValues, reverse=True))
 
     allfitnessValuesSum = np.array(allfitnessValues).sum()
     rn1 = allfitnessValuesSum * np.random.rand()
@@ -100,7 +102,7 @@ def crossing(populationFitnessDict, mutationProb, featurecount):
         parents = selection(populationFitnessDict)
         parent1 = sorted(parents[0])
         parent2 = sorted(parents[1])
-        crossBoarder = random.randint(5, 15)
+        crossBoarder = random.randint(featurecount/4, 3*(featurecount/4))
         parent1A = parent1[:crossBoarder]
         parent1B = parent1[crossBoarder:]
         parent2B = parent2[:crossBoarder]
@@ -118,7 +120,7 @@ def crossing(populationFitnessDict, mutationProb, featurecount):
 
                 distances = distance('dist_euclid', subTrainDataFrame, subTestDataFrame)
                 fitnessValue = meanRank(distances)
-                if fitnessValue > sorted(populationFitnessDict.keys())[-1]:
+                if fitnessValue > sorted(populationFitnessDict.keys(), reverse=True)[-1]:
                     childList = np.delete(childList, 0, 0)
             return childList
 
@@ -143,7 +145,7 @@ def mutation(mutationProb, child1, child2):
 
 def saveFeatures(population):
     populationFitnessDict = calculateFitness(population)
-    bestFitnessValue = sorted(populationFitnessDict.keys())[0]
+    bestFitnessValue = sorted(populationFitnessDict.keys(), reverse=True)[0]
     print("best chromosome:", bestFitnessValue, populationFitnessDict[bestFitnessValue])
     featureList = []
     for featureIndex in populationFitnessDict[bestFitnessValue]:
@@ -159,7 +161,10 @@ def saveFeatures(population):
 def clustering():
     data = pd.read_csv("subFeaturesTrain1.csv")
     data = data.set_index("Unnamed: 0")
-    Z = linkage(data, 'average', 'correlation')
+    distances = spatial.distance.pdist(data)
+    Z = linkage(distances, 'complete', 'correlation')
+    T = fcluster(Z, 3, 'maxclust')
+    print(T)
     plt.figure(figsize=(25, 10), dpi=80)
     plt.title('Hierarchical Clustering Dendrogram')
     plt.xlabel("distance")
@@ -173,4 +178,5 @@ def clustering():
     plt.show()
 
 
-clustering()
+# clustering()
+print(np.random.rand())
