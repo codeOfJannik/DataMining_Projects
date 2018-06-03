@@ -1,0 +1,73 @@
+- Aufgabe 4 (Block 1): Klammer hinter Amplituden-Werte überarbeiten oder entfernen
+- Aufgabe 3 (Block 1): Geänderte Lösung aus Notebook js329 übernehmen
+- Aufgabe 2 (Blok 2): Scipy: siehe Lösung in Notebook js329
+- Aufgabe 1 & 2 (Block 3): korrekte Beschreibung siehe Notebook js329
+- Aufgabe 1 (Block 4): siehe Lösung js329
+- Aufgabe 3 (Block Matching): Codebeschreibung Grammatik erster Satz
+    > verbessert: Für die Berechnung der Distanzen ist eine Funktion implementiert
+     worden, die die Distanzen sowohl auf Basis des **euklidische Distanzmaßes**,
+     wie auch auf Basis des **Pearson-Distanzmaßes** berechnen kann.
+- Aufgabe 3 (Block Matching): Anmerkung unter erster Codezelle
+    > verbessert: Berechnung der Distanz auf Basis des euklidischen Distanzmaß zwischen...
+- Aufgabe 4 (Block Matching): Anmerkung unter erster Codezelle
+    > verbessert: ... des mittleren Rangs bei der Verwendung des euklidischen Distanzmaßes
+- Aufgabe 5 (Block Matching): 1. Anmerkung
+    > verbessert: Berechnung der Distanz basierend auf...
+    > ??? entfernen
+- Diskussion Aufgabe 5 und 6
+    > Überschrift zusammenfassen: Aufgabe 5 und 6
+    > beim hören -> beim Anhören
+
+    > überarbeiten: wo die beiden Teilsequenzen eines Liedes sehr weit außeinander lagen
+     (frühestens an neunter, jedoch an deutlich späterer Stelle).
+    -> wird zu:
+      wo der Rang der zweiten Teilsequenz eines Musikstücks sehr groß war (z.B. He's a Pirate - Garrett).
+
+    > , auch als Ähnlich erkannt -> , auch als ähnlich erkannt
+    > Wenn unterschiedliche Tonhöhen druch die Pearson Distanz -> Rechtschreibung druch und Formulierung
+     -> Wenn unterschiedliche Tonhöhen durch Verwendung der Pearson Distanz
+
+    > da zwei Lieder die in unterschieldichen Grundoktaven liegen
+    ->da zwei Lieder, die in unterschiedlichen Oktaven liegen,
+
+    > löschen:Da (nur) die Standardabweichung normalisiert wurde,
+     und nicht (auch) der Mittelwert, wäre die euklidische Distanz das bevorzugte Ähnlichkeitsmaß.
+
+    > Afg. 6: Diese würden wir hier bei den...
+
+- Aufgabenblock Genetischer Algo:
+    - Erste Codebeschreibung (Initialisierung): ersetze alle * durch $ (siehe Notebook js329)
+    - Codebeschreibung Fitnnessfukton: ändere distances zu distance (2x)
+    - Codebeschreibung Selektion: Rechtschreibfehler Sekeltion -> Selektion
+    - Code der Funktion selection hat sich geändert: aus Notebook js329 übernehmen
+    - Codebeschreibung Kreuzungsfunktion hat sich geändert: aus Notebook js329 übernehmen
+    - Code der Funktion crossing hat sich geändert: aus Notebook js329 übernehmen
+    - Codebeschreibung Ablauf des Algorithmus:
+        und die Population zurückgegeben -> und die gesamte Population zurückgegeben
+    - Reihenfolge der durchgeführten Versuche ändern, bzw hinzufügen:
+        1. (popsize 20, featcount 20, iter 100, prob 5)
+        2. (20, 15, 100, 5)
+        3. (20, 30, 100, 5)
+        4. (50, 20, 100, 5)
+        5. (20, 20, 200, 5) -> Ergebnis mit 1. vergleichen
+        6. ggf. mit höherer MutationProb ??
+    Interpretation hinzufügen:
+    Das beste Ergebnis erreichen wir mit eine Populationsgröße von 20 Individuen und 20 Merkmalen pro Individuum.
+    Eine Vergrößerung der Population verbessert das Ergebnis nicht zwingend, wie in Durchlauf 4 zu sehen ist. Das
+    liegt daran, dass eine größere Population nur dazu führt, dass zu Beginn mehr Individuen erstellt werden und
+    somit der Fitnesswert ggf. zu Beginn schon höher ist.
+    >> Interpretation des Ergebnisses mit 200 Iterationen << Theoretisch müsste das Ergebnis mit zunehmender Anzahl
+    Iterationen immer besser werden.
+    - Aufgabe 4 (Berechnung mit 10 Merkmalen): ggf. weitere Durchläufe mit mehr Iterationen hinzufügen
+    > hinzufügen: Es ist auch stark vom Zufall abhängig (Selektion, Grenze bei der Kreuzung, Mutationswahrscheinlichkeit),
+    welcher Fitnesswert nach allen Iterationen erreicht wir. Der Fitnesswert kann durchaus stark variiern. Mit
+    zunehmender Anzahl Iterationen sollte die Varianz jedoch abnehmen.
+
+- Clustering
+    > clustering(median, euclid) ist doppelt vorhanden
+    > Aufgabe 2 steht schon immer in den Anmerkungen dabei
+    < Aufgabe 3 Lösung aus Notebook jj028 übernehmen
+
+
+
+
