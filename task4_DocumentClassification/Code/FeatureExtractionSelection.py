@@ -1,5 +1,7 @@
 from collections import Counter
 import numpy as np
+import pandas as pd
+import math
 
 
 def getWordsCounted(doc):
@@ -27,17 +29,22 @@ print(getWordsCounted(inputString))
 
 
 class Classifier:
-    def __init__(self):
+    def __init__(self, getfeatures, cat1, cat2, useTfIdf=False):
         self.fc = {}
-        self.cc = {'good': 0, 'bad': 0}
+        self.cat1 = cat1
+        self.cat2 = cat2
+        self.cc = {cat1: 0, cat2: 0}
+        self.getfeatures = getfeatures
+        self.tfidf = useTfIdf
+        if useTfIdf:
+            self.bowDict = {}
+            self.bowMatrix = pd.DataFrame
+            self.docCount = 0
 
     def incf(self, f, cat):
-        if f not in self.fc.keys():
-            self.fc[f] = {'good': 0, 'bad': 0}
+        if f not in list(self.fc.keys()):
+            self.fc[f] = {self.cat1: 0, self.cat2: 0}
         self.fc[f][cat] += 1
-
-    def getfeatures(self, item):
-        return getWordList(item)
 
     def incc(self, cat):
         self.cc[cat] += 1
@@ -54,26 +61,77 @@ class Classifier:
 
     def train(self, item, cat):
         self.incc(cat)
-        wordList = self.getfeatures(item)
-        [self.incf(word, cat) for word in wordList]
+        if self.tfidf == False:
+            wordList = self.getfeatures(item)
+            [self.incf(word, cat) for word in wordList]
+        else:
+            self.docCount += 1
+            wordDict = self.getfeatures(item)
+            docDict = {'cat': cat, 'words': wordDict}
+            self.bowDict['doc' + str(self.docCount)] = docDict
 
     def fprob(self, f, cat):
         return self.fcount(f, cat) / self.catcount(cat)
 
     def weightedprob(self, f, cat):
         initprob = 0.5
-        values = list(self.fc[f].values())
-        count = np.array(values).sum()
-        return (initprob + count * self.fprob(f, cat)) / (1 + count)
+        if self.tfidf:
+            count = self.bowMatrix.loc[self.bowMatrix[f] > 0][f].size
+            fprob = np.array(self.bowMatrix.loc[self.bowMatrix['categoryLabel'] == cat][f]).sum() / self.catcount(cat)
+        else:
+            if f in self.fc.keys():
+                values = list(self.fc[f].values())
+                count = np.array(values).sum()
+                fprob = self.fprob(f, cat)
+            else:
+                count = 0
+                fprob = 0
+        return (initprob + count * fprob) / (1 + count)
 
     def classify(self, item):
-        catList = self.cc.keys()
+        catList = list(self.cc.keys())
         resultDict = {}
-        for cat in catList:
-            probproduct = self.prob(item, cat)
-            catprob = self.catcount(cat) / self.totalcount()
-            resultDict[probproduct * catprob] = cat
+        if self.tfidf == False:
+            for cat in catList:
+                probproduct = self.prob(item, cat)
+                catprob = self.catcount(cat) / self.totalcount()
+                resultDict[probproduct * catprob] = cat
+        else:
+            self.bowMatrix = self.buildBowMatrix()
+            self.bowMatrix = self.buildTfIdfMatrix(self.bowMatrix)
+            for cat in catList:
+                probproduct = self.prob(item, cat)
+                catprob = self.catcount(cat) / self.totalcount()
+                resultDict[probproduct * catprob] = cat
         return resultDict
+
+    def buildBowMatrix(self):
+        columns = set()
+        for k, v in self.bowDict.items():
+            columns = columns | set(v['words'].keys())
+        columnList = list(columns)
+        columnList.append('categoryLabel')
+        bowMatrix = pd.DataFrame(columns=columnList)
+        for k, v in self.bowDict.items():
+            docValues = []
+            wordList = v['words'].keys()
+            for word in columns:
+                if word in wordList and word != 'categoryLabel':
+                    docValues.append(v['words'][word])
+                elif word != 'categoryLabel':
+                    docValues.append(0)
+                else:
+                    pass
+            docValues.append(v['cat'])
+            bowMatrix.loc[k] = docValues
+        return bowMatrix
+
+    def buildTfIdfMatrix(self, bowMatrix):
+        for col in bowMatrix.columns.values:
+            if col != 'categoryLabel':
+                idf = math.log(self.docCount / bowMatrix.loc[bowMatrix[col] > 0, col].size, 10)
+                bowMatrix[col] *= idf
+        return bowMatrix
 
     def prob(self, item, cat):
         itemprobs = []
@@ -85,7 +143,7 @@ class Classifier:
         return probproduct
 
 
-classifier = Classifier()
+classifier = Classifier(getWordsCounted, 'good', 'bad', useTfIdf=True)
 
 trainData = {'the quick rabbit jumps fences': 'good', 'buy pharmaceuticals now': 'bad',
              'make quick money at the online casino': 'bad', 'the quick brown fox jumps': 'good',
