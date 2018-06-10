@@ -9,7 +9,7 @@ def getwords(doc, minWords=3, maxWords=20):
     return dictionary
 
 
-class Classifier:
+class Classifier():
 
     # constructor to initialize the fc and cc dictionaries and the getfeatures instance variable
     def __init__(self, getfeatures):
@@ -49,6 +49,7 @@ class Classifier:
     def totalcount(self):
         return sum(self.cc.values())
 
+    # method to calculate the probability that word f is contained in documents of category cat
     def fprob(self, f, cat):
         if self.fc[f].get(cat, 0) == 0:
             return 0
@@ -82,6 +83,23 @@ class Classifier:
         # add 1 for category cat in dictionary cc
         self.incc(cat)
 
+    #
+    def classify(self, item):
+        # cats is a dictionary that assigns each category a probability, that the document item is in this category.
+        cat_dict = {}
+        # add categories to dictionary cat_dict with its assigned value of the prob method
+        for cat in self.cc:
+            cat_dict[cat] = self.prob(item, cat)
+
+        # calculate the highest probability
+        key = None
+        val = 0
+        for cat in cat_dict:
+            if cat_dict[cat] > val:
+                key = cat
+                val = cat_dict[cat]
+        return key
+
 
 # instantiate an object of the classifier class
 c = Classifier(getwords)
@@ -105,11 +123,11 @@ given_sentence = "the money jumps"
 category1 = "good"
 category2 = "bad"
 
-# print probability of a given sentence
+# print classification (probability that a given sentence belongs to a certain category)
 print()
-print("*****" * 20)
-print("The probability that '" + given_sentence + "' belongs to category '" + category1 + "' is: " + str(c.prob(given_sentence, category1)))
-print("-----" * 20)
-print("The probability that '" + given_sentence + "' belongs to category '" + category2 + "' is: " + str(c.prob(given_sentence, category2)))
-print("*****" * 20)
+print("*****" * 22)
+print("The probability that the sentence '" + str(given_sentence) + "' belongs to category '" + category1 + "' is: " + str(c.prob(given_sentence, category1)))
+print("-----" * 22)
+print("The probability that the sentence '" + str(given_sentence) + "' belongs to category '" + category2 + "' is: " + str(c.prob(given_sentence, category2)))
+print("*****" * 22)
 print()
