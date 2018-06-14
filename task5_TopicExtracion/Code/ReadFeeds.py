@@ -1,6 +1,9 @@
 import feedparser
 from nltk.corpus import stopwords
 import re
+from gensim import corpora, models
+from itertools import repeat
+import numpy as np
 
 feedlist=['http://feeds.reuters.com/reuters/topNews',
           'http://feeds.reuters.com/reuters/businessNews',
@@ -27,6 +30,7 @@ def stripHTML(h):
       p+=' '
     elif s==0: p+=c
   return p
+
 
 def getWordList(doc):
     words = str.split(doc.lower())
@@ -79,9 +83,9 @@ def getarticlewords(feedList):
                 nonrelevantwords.append(word)
 
     for word in nonrelevantwords:
-        allwords.pop(word)
+        catchValue = allwords.pop(word)
         for article in articlewords:
-            article.pop(word, None)
+            catchValue = article.pop(word, None)
 
     for article in articlewords:
         if not article:
@@ -98,12 +102,30 @@ def getarticlewords(feedList):
     articletitles = list(filter(None, articletitles))
     return allwords, articlewords, articletitles
 
-
 returnValues = getarticlewords(feedlist)
 allwords = returnValues[0]
 articlewords = returnValues[1]
 articletitles = returnValues[2]
 
-[print(key,':', value) for key, value in allwords.items()]
 print(50*'*')
-[print(docDict) for docDict in articlewords]
+for docDict in articlewords:
+    print(docDict)
+
+
+def makematrix(allwords, articlewords):
+    dictionary = corpora.Dictionary([allwords.keys()])
+    corpus = []
+    for doc in articlewords:
+        wordList = []
+        for k, v in doc.items():
+            wordList += [k] * v
+        corpus += [dictionary.doc2bow(wordList)]
+    # tfidf = models.TfidfModel(corpus)
+    matrix = np.zeros(shape=(len(articlewords), len(allwords.keys())))
+    for i in range(len(corpus)):
+        # corpus_tfidf = tfidf[corpus[i]]
+        for tuple in corpus[i]:
+            matrix[i][tuple[0]] = tuple[1]
+    return matrix
+
+matrix = makematrix(allwords, articlewords)
