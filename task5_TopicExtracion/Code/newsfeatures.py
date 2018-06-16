@@ -106,17 +106,6 @@ def getarticlewords():
 
     return (allwords, articlewords, articletitles)
 
-#########
-# 2.2.2 #
-#########
-
-
-# makematrix Function to write the wordvec and wordInArt Global Variables
-#
-# Params
-# allw: Dict - Dictionary that contains all Words with their overall count.
-# articlewords: Dict - Dictionary that contains numeric Keys for each Article which contains Words as Keys and WordCount as Value
-#
 # Note:
 # The wordvec and wordInArt results, will be written as Dict.
 # This way no Information about the Words gets lost.
@@ -153,17 +142,6 @@ def makematrix(allw, articlew, articletitles):
             trimmedPercent.pop(wordV)
         percentage = 0
 
-    if debug:
-        # Debugging output for the two Word Reduction Steps
-        print('###########################################')
-        print('############## >= 4 Check #################')
-        print('###########################################')
-        print(trimmedV)
-        print('###########################################')
-        print('############## > 30% Check ################')
-        print('###########################################')
-        print(trimmedPercent)
-
     # Create Article/Word Matrix
     #
     # We Loop trough the articlewords for vector i
@@ -191,14 +169,6 @@ def makematrix(allw, articlew, articletitles):
     for index in reversed(popArticleTitles):
         articletitles.pop(index)
 
-    if debug:
-        # Printing the awMatrix for Debugging Purposes
-        print('###########################################')
-        print('######## The Article/Word Matrix ##########')
-        print('###########################################')
-        # pp.pprint(awMatrix)
-        print(awMatrix)
-
     # Writing the wordvec and wordInArt Variables
     # Note: This should give us an reference, so no Additional Space is wasted in RAM
     # nicht tun! wordvec = trimmedPercent
@@ -215,12 +185,6 @@ def makematrix(allw, articlew, articletitles):
         else:
             wordvecText += txtWord + '\n'
 
-    if debug:
-        print('###########################################')
-        print('###### Text to Write from wordvec #########')
-        print('###########################################')
-        print wordvecText
-
     # Creating the Data from wordInArt Matrix
     wordInArtText = ''
     for txtArticle in awMatrix:
@@ -230,12 +194,6 @@ def makematrix(allw, articlew, articletitles):
             else:
                 wordInArtText += str(awMatrix[txtArticle][txtData]) + '\n'
 
-    if debug:
-        print('###########################################')
-        print('###### Text to Write from wordInArt #######')
-        print('###########################################')
-        print wordInArtText
-
     # Writing to File
     file.write(wordvecText)
     file.write(wordInArtText)
@@ -244,16 +202,6 @@ def makematrix(allw, articlew, articletitles):
     return (wordvec, wordInArt, articletitles)
 
 
-#########
-# 2.2.3 #
-#########
-
-
-# transformMatrix function to Transform the wordInArt Dict to a Numpy Matrix
-#
-# Params:
-# awDict - Representation of the wordInArt Dict
-#
 # Returns the Article/Word Matrix as numpy.matrix Object
 def transformMatrix(awDict):
     matrixList = []
@@ -268,18 +216,8 @@ def transformMatrix(awDict):
     # Transforming nested List to an numpy Matrix
     awNumpyMatrix = np.matrix(matrixList)
 
-    if debug:
-        print('###########################################')
-        print('###### The Article/Word as np.matrix ######')
-        print('###########################################')
-        print(awNumpyMatrix)
-
     return awNumpyMatrix
 
-
-#########
-# 2.2.4 #
-#########
 
 # A and B are of type numpy.matrix
 # returns the summed euclidean distance of the passed matrices
@@ -371,12 +309,8 @@ def nnmf(A, m, it):
     return W, H
 
 
-#########
-# 2.3.1 #
-#########
-
 def showfeatures(W, H, titles, wordvec):
-    # Merkmale ####################################
+    # Merkmale
     sixImpWords = []
     threeImpArt = []
     rows, columns = H.shape
@@ -392,7 +326,7 @@ def showfeatures(W, H, titles, wordvec):
             sixW.append(sortword[y][1])
         sixImpWords.append(sixW)
 
-        # Important articles ###########################
+        # Important articles
     rows, columns = W.shape
 
     for i in range(columns):
