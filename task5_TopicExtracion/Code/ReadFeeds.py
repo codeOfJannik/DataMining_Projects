@@ -1,8 +1,8 @@
 import feedparser
 from nltk.corpus import stopwords
+from nltk.stem import PorterStemmer
 import re
-from gensim import corpora, models
-from itertools import repeat
+from gensim import corpora
 import numpy as np
 import queue
 
@@ -39,6 +39,7 @@ def getWordList(doc):
     words = str.split(doc.lower())
     wordsStripped = [word.strip('().,:;!?-"') for word in words]
     words = [word for word in wordsStripped if 2 < len(word) < 20 and word not in stopwords.words('english')]
+    words = [PorterStemmer().stem(word) for word in words]
     return words
 
 
@@ -46,8 +47,9 @@ def getarticlewords(feedList):
     allwords = {}
     articlewords = []
     articletitles = []
+    words = []
 
-    for feed in feedlist:
+    for feed in feedList:
         print('*' * 30)
         print(feed)
         f = feedparser.parse(feed)
@@ -57,12 +59,13 @@ def getarticlewords(feedList):
                 articletitles.append(message.title)
                 try:
                     fulltext = stripHTML(message.title + ' ' + message.description)
+                    words = getWordList(fulltext)
                 except:
                     try:
                         fulltext = stripHTML(message.title + ' ' + message.summary)
+                        words = getWordList(fulltext)
                     except:
                         print('no description or summary for', message.title)
-                words = getWordList(fulltext)
                 docDict = {}
                 for word in words:
                     if word in allwords.keys():
@@ -92,14 +95,14 @@ def getarticlewords(feedList):
 
     for article in articlewords:
         if not article:
-            del articletitles[articlewords.index(article)]
-            articlewords.remove(article)
-        # try without this block
-        elif len(article) < 3:
-            for word in article.keys():
-                allwords[word] -= 1
             articletitles[articlewords.index(article)] = None
             articlewords[articlewords.index(article)] = None
+        # # try without this block
+        # elif len(article) < 3:
+        #     for word in article.keys():
+        #         allwords[word] -= 1
+        #     articletitles[articlewords.index(article)] = None
+        #     articlewords[articlewords.index(article)] = None
 
     articlewords = list(filter(None, articlewords))
     articletitles = list(filter(None, articletitles))
@@ -128,10 +131,10 @@ def makematrix(allwords, articlewords):
     for i in range(len(corpus)):
         for tuple in corpus[i]:
             matrix[i][tuple[0]] = tuple[1]
-    return matrix
+    return matrix, dictionary
 
 
-matrix = makematrix(allwords, articlewords)
+matrix, dictionary = makematrix(allwords, articlewords)
 
 
 def cost(A, B):
@@ -183,9 +186,8 @@ def showfeatures(H, W, articletitles, wordvec):
     featurelist = []
     for row in H:
         innerList = []
-        index = 0
-        for index in range(len(wordvec)):
-            innerList.append((row[index], wordvec[index]))
+        for key, value in wordvec.items():
+            innerList.append((row[value], key))
         innerList.sort(key=lambda tup: tup[0], reverse=True)
         featurelist.append(innerList)
     featurelist = [element[:6] for element in featurelist]
@@ -208,4 +210,4 @@ def showfeatures(H, W, articletitles, wordvec):
 
 
 
-showfeatures(H, W, articletitles, list(allwords.keys()))
+showfeatures(H, W, articletitles, dictionary.token2id)
