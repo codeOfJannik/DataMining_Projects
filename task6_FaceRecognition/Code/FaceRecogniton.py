@@ -1,0 +1,183 @@
+from os.path import isdir, join, normpath
+from os import listdir
+
+from PIL import Image
+
+from numpy import asfarray, dot
+from numpy import average, argsort
+from numpy.linalg import eigh
+import scipy.spatial.distance as ssd
+
+import tkFileDialog
+
+
+def parseDirectory(directoryName, extension):
+    '''This method returns a list of all filenames in the Directory directoryName.
+    For each file the complete absolute path is given in a normalized manner (with
+    double backslashes). Moreover only files with the specified extension are returned in
+    the list.
+    '''
+    if not isdir(directoryName): return
+    imagefilenameslist = sorted([
+        normpath(join(directoryName, fname))
+        for fname in listdir(directoryName)
+        if fname.lower().endswith('.' + extension)
+    ])
+    return imagefilenameslist
+
+
+def generateListOfImages(ListOfTrainFiles):
+    imgfiles = []
+    for filename in ListOfTrainFiles:
+        im = Image.open(filename)
+        imgfiles.append(im)
+    return imgfiles
+
+
+def imgToVec(img):
+    #convert image to vector 2d
+    vec = asfarray(img)
+    #norm vector
+    vec = vec / vec.max()
+    #convert 2d-vector to 1d-vector
+    vec = vec.flatten()
+    return vec
+
+
+def convertImgListToNumpyData(imgList):
+    imgArray = []
+    #convert all image filenames to vectors
+    for img in imgList:
+        imgArray.append(imgToVec(img))
+    return asfarray(imgArray)
+
+
+# The .T accesses the attribute T of the object, which happens to be a NumPy array.
+# The T attribute is the transpose of the array, see the documentation.
+def calculateEigenfaces(adjfaces, width, height, K=6):
+    CV = dot(adjfaces, adjfaces.T)
+    #print CV.shape
+    eigVal, eigVec = eigh(CV)
+    indices = argsort(eigVal)[-K:][::-1]
+    usub = []
+    for ind in indices:
+        usub.append(dot(eigVec[ind], adjfaces))
+    #print len(usub)
+
+    return usub
+
+
+def selectFilesAndFolders(noUserInput=True):
+    if noUserInput:
+        #Choose Directory which contains all training images
+        TrainDir = "../../Resources/Gesichtsbilder/training"
+        #Choose the image which shall be recognized
+        testImageDirAndFilename = "../../Resources/Gesichtsbilder/test/1-1.png"
+    else:
+        #Choose Directory which contains all training images
+        TrainDir=tkFileDialog.askdirectory(title="Choose Directory of training images")
+        #Choose the image which shall be recognized
+        testImageDirAndFilename=tkFileDialog.askopenfilename(title="Choose Image to detect")
+
+    return TrainDir, testImageDirAndFilename
+
+####################################################################################
+#Start of main programm
+#Choose the file extension of the image files
+####################################################################################
+if __name__ == "__main__":
+    Extension = 'png'
+
+    #set to True for debug output
+    verbose = False
+    #auto-select files
+    noUserInput = True
+
+    TrainDir, testImageDirAndFilename = selectFilesAndFolders(noUserInput)
+
+    A321 = False
+    K = 5
+
+    #set to True to create false classifications
+    A341 = False
+    if A341:
+        #this will result in some false classifications
+        K = 4
+        #this will result in a lot of false classifications
+        K = 2
+
+    #list of all training images
+    listOfTrainFiles = parseDirectory(TrainDir, Extension)
+
+    imgList = generateListOfImages(listOfTrainFiles)
+
+    if A321:
+        for img in imgList:
+            print img.format, img.size, img.mode
+    width, height = imgList[0].size
+
+
+    ArrayOfFaces = convertImgListToNumpyData(imgList)
+
+
+    NormedArrayOfFaces = ArrayOfFaces - average(ArrayOfFaces)
+
+    eigenfaces = calculateEigenfaces(NormedArrayOfFaces, width, height, K=K)
+
+
+    trainedFaces = []
+    for face in NormedArrayOfFaces:
+        trainedFaces.append(dot(face, asfarray(eigenfaces).T))
+    if verbose:
+        print trainedFaces
+
+
+    #getting test image
+    testImage = Image.open(testImageDirAndFilename)
+    testImageArray = imgToVec(testImage)
+    if verbose:
+        print testImageArray
+
+    #getting average test image
+    NormedTestFace = testImageArray - average(ArrayOfFaces)
+    if verbose:
+        print NormedTestFace
+
+    #average test immage dotted with eigenfaces
+    recTest = dot(NormedTestFace, asfarray(eigenfaces).T)
+    if verbose:
+        print "recTest:", recTest
+
+    # initializing recognition
+    mindist = 9999
+    pos = -1
+    for i, trainface in enumerate(trainedFaces):
+        dist = ssd.euclidean(recTest, trainface)
+        if verbose:
+            #output all the distances
+            print i, dist
+
+        #set minimum distance image
+        if dist < mindist:
+            mindist = dist
+            pos = i
+    if verbose:
+        print "-------------------------"
+
+    #getting mindist and position of image, position is image to be shown
+    if verbose:
+        print "mindist:", mindist, "pos:", pos
+
+
+    #show images
+    print "TEST IMAGE:", testImageDirAndFilename
+    testImage.save('../../Resources/Gesichtsbilder/image_tested.png')
+    print "  saved image to '../../Resources/Gesichtsbilder/image_tested.png'"
+    testImage.show()
+
+    print "RECOGNIZED IMAGE:", listOfTrainFiles[pos]
+    imgList[pos].save('../../Resources/Gesichtsbilder/image_recognized.png')
+    print "  saved image to '../../Resources/Gesichtsbilder/image_recognized.png'"
+    imgList[pos].show()
+
+    print "CALCULATED DISTANCE:", mindist
