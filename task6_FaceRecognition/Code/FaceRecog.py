@@ -62,9 +62,10 @@ def showImage(imageVector):
 showImage(averageImage)
 
 
-def calculateEigenfaces(adjfaces, width, height):
-    CV = np.dot(np.transpose(adjfaces), adjfaces)
-    return np.linalg.eigh(CV)
+def calculateEigenfaces(adjfaces):
+    CV = np.dot(adjfaces, adjfaces.T)
+    eigenvalues, eigenvectors = np.linalg.eigh(CV)
+    return eigenvalues, eigenvectors
 
 
-eigenvalues, eigenvectors = calculateEigenfaces(normedArrayOfFaces, 220, 150)
+eigenvalues, eigenvectors = calculateEigenfaces(normedArrayOfFaces)
