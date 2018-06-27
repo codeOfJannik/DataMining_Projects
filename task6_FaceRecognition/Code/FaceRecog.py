@@ -4,6 +4,7 @@ from os import listdir
 import numpy as np
 from matplotlib import pyplot as plt
 from matplotlib import image as mplimg
+import os.path
 
 
 def parseDirectory(directoryName, extension):
@@ -12,17 +13,18 @@ def parseDirectory(directoryName, extension):
     double backslashes). Moreover only files with the specified extension are returned in
     the list.
     '''
-    if not isdir(directoryName): return
+
+    curDir = curDir + directoryName
+    if not curDir: return
     imagefilenameslist = sorted([
-        normpath(join(directoryName, fname))
-        for fname in listdir(directoryName)
+        normpath(join(curDir, fname))
+        for fname in listdir(curDir)
         if fname.lower().endswith('.' + extension)
     ])
     return imagefilenameslist
 
 
-imagefilenamelist = parseDirectory(
-    "/Users/janniks97/Documents/DataMining/DataMiningProjects/Resources/Gesichtsbilder/training", "png")
+imagefilenamelist = parseDirectory("/Resources/Gesichtsbilder/training/", "png")
 print(imagefilenamelist)
 
 
