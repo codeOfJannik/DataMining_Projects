@@ -89,7 +89,7 @@ if __name__ == "__main__":
     Extension = 'png'
 
     #set to True for debug output
-    verbose = False
+    verbose = True
     #auto-select files
     noUserInput = True
 
